@@ -1,0 +1,17 @@
+{
+  "name": "video-saver",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Publicly deployable video downloader and metadata cleaner.",
+  "scripts": {
+    "start": "node server.js",
+    "update-downloader": "node server.js --update"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ffmpeg-static": "^5.2.0"
+  }
+}

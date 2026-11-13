@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Vysaver</title>
+<style>
+:root{
+  --bg:#090a08; --ink:#f5f6ef; --muted:#b7bbab; --faint:#7d8372;
+  --lime:#d6f257; --lime-hi:#f5ffae; --lime-lo:#b4de48; --bad:#ff9c8f;
+  --line:rgba(255,255,255,.10); --card:rgba(255,255,255,.035);
+  --sans:"Inter","SF Pro Display","SF Pro Text",-apple-system,"Helvetica Neue",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); font-family:var(--sans); line-height:1.5; -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(720px 440px at 88% -4%, rgba(190,220,60,.20), transparent 65%),
+    radial-gradient(900px 600px at -6% 42%, rgba(120,140,30,.07), transparent 70%),
+    var(--bg);
+  background-attachment:fixed;
+}
+.wrap{max-width:1160px; margin:0 auto; padding:0 24px}
+svg{width:18px; height:18px; flex:none; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+button,select,input{font:inherit}
+button{cursor:pointer; border:0; color:inherit; background:none}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--lime); outline-offset:3px}
+
+/* header */
+.top{display:flex; align-items:center; justify-content:space-between; gap:20px; padding:22px 0}
+.brand{display:flex; align-items:center; gap:12px; text-decoration:none}
+.mark{
+  width:38px; height:38px; border-radius:12px; display:grid; place-items:center; font-weight:900; font-size:20px; color:#11140a;
+  background:linear-gradient(135deg,var(--lime-hi),var(--lime-lo)); box-shadow:0 0 28px -4px rgba(214,242,87,.55);
+}
+.word{font-weight:800; letter-spacing:.22em; font-size:17px}
+.top nav{display:flex; gap:28px}
+.top nav a{color:var(--lime); text-decoration:none; font-weight:600; font-size:15px}
+.top nav a:hover{text-decoration:underline; text-underline-offset:5px}
+.login{
+  display:flex; align-items:center; gap:8px; padding:6px 8px 6px 14px; border-radius:12px;
+  border:1px solid var(--line); background:rgba(255,255,255,.03); font-size:13px; color:var(--muted);
+}
+.login select{
+  background:rgba(255,255,255,.06); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:5px 8px; font-size:13px; font-weight:600;
+}
+.login select option{color:#111}
+
+/* hero */
+.hero{display:grid; grid-template-columns:1.25fr 1fr; gap:48px; align-items:center; padding:46px 0 24px}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:9px; padding:8px 14px; border-radius:99px; border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.03); color:var(--lime-hi); font-weight:800; font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+}
+.eyebrow i{width:7px; height:7px; border-radius:50%; background:var(--lime); box-shadow:0 0 10px var(--lime)}
+h1{font-size:clamp(40px,5.6vw,72px); font-weight:800; letter-spacing:-.055em; line-height:.98; margin:26px 0 24px}
+h1 span{display:block; white-space:nowrap}
+em{font-style:normal; background:linear-gradient(90deg,var(--lime-hi),var(--lime-lo)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.lede{color:var(--muted); font-size:18px; max-width:34em; margin:0 0 30px}
+
+.field{
+  display:flex; align-items:center; gap:10px; padding:8px; border-radius:20px;
+  background:rgba(255,255,255,.04); border:1px solid var(--line); transition:border-color .15s, box-shadow .15s;
+}
+.field:focus-within{border-color:rgba(214,242,87,.55); box-shadow:0 0 0 4px rgba(214,242,87,.08)}
+.field input{flex:1; min-width:0; border:0; outline:0; background:transparent; color:var(--ink); font-size:16px; padding:12px 14px}
+.field input:focus-visible{outline:0}
+.field input::placeholder{color:var(--faint)}
+.btn{
+  display:inline-flex; align-items:center; gap:9px; padding:14px 20px; border-radius:14px; font-weight:700; font-size:15px; white-space:nowrap;
+  color:#11140a; text-decoration:none; background:linear-gradient(135deg,var(--lime-hi),var(--lime-lo));
+  box-shadow:0 12px 30px -14px rgba(214,242,87,.8), inset 0 1px 0 rgba(255,255,255,.55); transition:filter .15s, transform .15s;
+}
+.btn:hover:not(:disabled){filter:brightness(1.06)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{opacity:.55; cursor:progress}
+.btn.ghost{background:rgba(255,255,255,.06); color:var(--ink); box-shadow:none; border:1px solid var(--line)}
+.btn.ghost:hover{background:rgba(255,255,255,.1)}
+.perks{display:flex; flex-wrap:wrap; gap:6px 18px; list-style:none; padding:0; margin:16px 2px 0; color:var(--faint); font-size:13px}
+.perks li::before{content:"✦"; margin-right:6px; font-size:10px}
+
+.notice{display:none; margin-top:16px; padding:14px 16px; border-radius:16px; background:rgba(255,255,255,.04); border:1px solid var(--line)}
+.notice.on{display:block}
+.notice.error{border-color:rgba(255,156,143,.5)}
+.notice.error strong{color:var(--bad)}
+.notice strong{display:block; margin-bottom:2px; font-size:15px}
+.notice p{margin:0; color:var(--muted); font-size:14px; overflow-wrap:anywhere}
+.notice .actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
+
+/* process card */
+.process{
+  position:relative; overflow:hidden; padding:26px; border-radius:36px; border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+}
+.process::before{
+  content:""; position:absolute; right:-70px; top:-70px; width:260px; height:260px; border-radius:50%;
+  background:radial-gradient(circle, rgba(190,220,60,.38), transparent 68%); pointer-events:none;
+}
+.tag{position:relative; font-weight:800; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--lime-hi)}
+.tilt{
+  position:relative; margin:46px 0 26px; padding:24px 24px 28px; border-radius:26px; transform:rotate(-2.4deg);
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025)); border:1px solid var(--line);
+  box-shadow:0 24px 50px -28px rgba(0,0,0,.9);
+}
+.tilt h3{font-size:30px; line-height:1.05; letter-spacing:-.04em; margin:14px 0 0; font-weight:800; max-width:6.6em}
+.bars{margin-top:22px}
+.bars i{display:block; height:9px; border-radius:9px; background:rgba(255,255,255,.1); overflow:hidden; margin-top:10px}
+.bars i:last-child{width:68%}
+.bars b{display:block; height:100%; width:0; border-radius:9px; background:linear-gradient(90deg,var(--lime-lo),var(--lime-hi)); transition:width .35s ease}
+.stamp{
+  display:inline-block; margin-top:24px; padding:9px 14px; border-radius:9px; font-weight:800; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;
+  color:#11140a; background:linear-gradient(135deg,var(--lime-hi),var(--lime)); transform:rotate(-3deg); transition:all .2s;
+}
+.stamp.work{background:rgba(255,255,255,.07); color:var(--lime-hi); border:1px solid rgba(214,242,87,.4)}
+.steps{position:relative; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; list-style:none; margin:0; padding:0}
+.steps li{padding:12px 14px; border-radius:16px; border:1px solid var(--line); font-weight:700; font-size:13.5px; transition:all .2s}
+.steps small{display:block; font-weight:600; color:var(--faint); font-size:12px}
+.steps li.active{border-color:rgba(214,242,87,.65); background:rgba(214,242,87,.08); box-shadow:0 0 24px -10px rgba(214,242,87,.6)}
+.steps li.active small,.steps li.done small{color:var(--lime)}
+
+/* sections */
+.section{margin-top:90px}
+h2{font-size:clamp(30px,4vw,44px); font-weight:800; letter-spacing:-.045em; line-height:1.05; margin:0 0 10px}
+.sub{color:var(--muted); margin:0 0 28px; font-size:17px}
+.yt{max-width:880px; margin:80px auto 0; padding:30px 30px 32px; border-radius:30px; border:1px solid var(--line); background:var(--card)}
+.yt h2{margin:18px 0 12px}
+.yt p.sub{font-size:15px; margin-bottom:20px}
+.yt .field{max-width:700px}
+.ytresult{display:none; max-width:700px; margin-top:16px; padding:16px 18px; border-radius:18px; border:1px solid rgba(214,242,87,.35); background:rgba(214,242,87,.05)}
+.ytresult.on{display:block}
+.ytresult .name{font-weight:700; overflow-wrap:anywhere}
+.ytresult .meta{color:var(--muted); font-size:13.5px; margin:2px 0 14px}
+.ytresult .actions{display:flex; flex-wrap:wrap; gap:10px}
+
+.cards{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+.card{padding:22px; border-radius:24px; border:1px solid var(--line); background:var(--card)}
+.ico{width:38px; height:38px; border-radius:11px; display:grid; place-items:center; color:var(--lime); background:rgba(214,242,87,.10); margin-bottom:34px}
+.card h3{margin:0 0 6px; font-size:17px; letter-spacing:-.01em}
+.card p{margin:0; color:var(--muted); font-size:14.5px}
+
+.saved{display:none; margin-top:60px}
+.saved.on{display:block}
+.saved ul{list-style:none; padding:0; margin:14px 0 0; display:grid; gap:8px}
+.saved li{display:flex; justify-content:space-between; gap:16px; padding:13px 16px; border-radius:14px; border:1px solid var(--line); background:var(--card); font-size:14.5px}
+.saved li span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.saved li a{color:var(--lime); font-weight:700; text-decoration:none; white-space:nowrap}
+.saved h2{font-size:26px}
+footer{margin:80px 0 40px; color:var(--faint); font-size:13px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+
+@media (prefers-reduced-motion: reduce){ *{transition:none !important; scroll-behavior:auto !important} }
+@media (max-width:920px){
+  .hero{grid-template-columns:1fr; gap:36px}
+  h1 span{white-space:normal}
+  .cards{grid-template-columns:1fr}
+  .top nav{display:none}
+  .section{margin-top:64px}
+}
+@media (max-width:560px){
+  .field{flex-wrap:wrap} .field input{flex:1 1 100%} .field .btn{flex:1; justify-content:center}
+  .top{flex-wrap:wrap}
+}
+</style></head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <a class="brand" href="#top"><span class="mark">V</span><span class="word">VYSAVER</span></a>
+  <nav aria-label="Page"><a href="#how">How it works</a><a href="#features">Features</a></nav>
+  <span class="login" title="Public hosting cannot access cookies stored in your personal browser">Public video links only</span>
+</header>
+
+<section class="hero" id="top">
+  <div>
+    <span class="eyebrow"><i></i>Your video workspace</span>
+    <h1><span>Save your videos.</span><span><em>Keep them clean.</em></span></h1>
+    <p class="lede">Paste a video link, download a copy you’re allowed to save, and remove embedded metadata from the finished file.</p>
+
+    <div class="field">
+      <input id="url" type="url" inputmode="url" placeholder="Paste your video link here…" aria-label="Video link" autocomplete="off" autofocus>
+      <button class="btn" id="go" type="button"><span id="goLabel">Download video</span>
+        <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></button>
+    </div>
+    <ul class="perks"><li>Simple workflow</li><li>Metadata cleaning</li><li>MP4 output</li></ul>
+    <div class="notice" id="notice" role="status"></div>
+  </div>
+
+  <aside class="process" aria-live="polite" aria-label="Progress">
+    <span class="tag">Vysaver / Process</span>
+    <div class="tilt">
+      <span class="tag">Video processing</span>
+      <h3>From link to clean file.</h3>
+      <div class="bars"><i><b id="barA"></b></i><i><b id="barB"></b></i></div>
+      <span class="stamp" id="stamp">Metadata removed</span>
+    </div>
+    <ol class="steps">
+      <li id="st1"><small>01</small>Paste a link</li>
+      <li id="st2"><small>02</small>Clean metadata</li>
+      <li id="st3"><small>03</small>Save your file</li>
+    </ol>
+  </aside>
+</section>
+
+<section class="yt" id="youtube">
+  <span class="eyebrow"><i></i>Dedicated downloader</span>
+  <h2>YouTube <em>Only.</em></h2>
+  <p class="sub">Paste a YouTube link. Download it first, then choose whether to keep the original or clean its metadata.</p>
+  <div class="field">
+    <input id="yturl" type="url" inputmode="url" placeholder="Paste a YouTube link here…" aria-label="YouTube link" autocomplete="off">
+    <button class="btn" id="fetch" type="button"><span id="fetchLabel">Fetch YouTube video</span>
+      <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></button>
+  </div>
+  <div class="notice" id="ytnotice" role="status"></div>
+  <div class="ytresult" id="ytresult">
+    <div class="name" id="ytname"></div>
+    <div class="meta" id="ytmeta">Downloaded. Keep it as it is, or remove the metadata.</div>
+    <div class="actions" id="ytactions"></div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <h2>Simple by design.</h2>
+  <p class="sub">A straightforward way to prepare a video file.</p>
+  <div class="cards">
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></div><h3>Paste your link</h3><p>Start with a supported video URL for content you’re authorised to save.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.7L19.5 10.5l-5.7 1.8L12 18l-1.8-5.7L4.5 10.5l5.7-1.8z"/></svg></div><h3>Clean the metadata</h3><p>Remove embedded metadata from the processed output file.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></div><h3>Download your file</h3><p>Get the cleaned MP4 when processing is complete.</p></div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <h2>Built for a cleaner workflow.</h2>
+  <p class="sub">Everything happens on this computer.</p>
+  <div class="cards">
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><h3>Runs on your computer</h3><p>Nothing is uploaded. Videos are processed here and removed when you close the app.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></div><h3>No quality loss when possible</h3><p>If a video is already in a QuickTime-friendly format, its streams are copied untouched.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z"/></svg></div><h3>Plays everywhere</h3><p>Finished files are MP4 (H.264 and AAC), so they open in QuickTime and most players.</p></div>
+  </div>
+</section>
+
+<section class="saved" id="saved">
+  <h2>Saved this session</h2>
+  <ul id="list"></ul>
+</section>
+
+<footer><span>Only save videos you have the right to keep.</span><span>Vysaver runs locally on your computer.</span></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const arrow='<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg>';
+const dlIcon='<svg viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>';
+let busy=false;
+
+/* ---------- shared helpers ---------- */
+async function post(path, body){
+  const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});
+  let d={}; try{ d=await r.json(); }catch(e){}
+  if(!r.ok) throw new Error(d.error||'The request failed.');
+  return d;
+}
+function poll(id, finished, onUpdate){
+  return new Promise(resolve=>{
+    const t=setInterval(async()=>{
+      let s; try{ s=await (await fetch('/status/'+id)).json(); }catch(e){ return; }
+      onUpdate(s);
+      if(s.error || finished(s)){ clearInterval(t); resolve(s); }
+    },600);
+  });
+}
+function notice(el,kind,title,body,nodes){
+  el.className='notice on '+kind;
+  el.innerHTML='<strong></strong><p></p>';
+  el.querySelector('strong').textContent=title;
+  el.querySelector('p').textContent=body||'';
+  if(nodes && nodes.length){ const d=document.createElement('div'); d.className='actions'; nodes.forEach(n=>d.append(n)); el.append(d); }
+}
+function clearNotice(el){ el.className='notice'; el.innerHTML=''; }
+function link(cls,href,html){ const a=document.createElement('a'); a.className=cls; a.href=href; a.innerHTML=html; return a; }
+function addSaved(id,name){
+  $('saved').classList.add('on');
+  const li=document.createElement('li');
+  const span=document.createElement('span'); span.textContent=name; span.title=name;
+  const a=document.createElement('a'); a.href='/file/'+id; a.textContent='Save again';
+  li.append(span,a); $('list').prepend(li);
+}
+function setBusy(b){
+  busy=b;
+  $('go').disabled=b; $('fetch').disabled=b;
+  $('goLabel').textContent=b?'Working…':'Download video';
+}
+
+/* ---------- process card ---------- */
+const steps=[$('st1'),$('st2'),$('st3')];
+function idle(){
+  $('barA').style.width='0'; $('barB').style.width='0';
+  steps.forEach(s=>s.classList.remove('active','done'));
+  const st=$('stamp'); st.textContent='Metadata removed'; st.classList.remove('work');
+}
+function setProcess(stage,pct){
+  const st=$('stamp'); st.classList.toggle('work', stage!=='done');
+  const idx={downloading:0,fetched:1,cleaning:1,done:2}[stage] ?? 0;
+  steps.forEach((s,i)=>{ s.classList.toggle('active', i===idx && stage!=='done'); s.classList.toggle('done', i<idx || stage==='done'); });
+  if(stage==='downloading'){ $('barA').style.width=Math.max(4,pct)+'%'; $('barB').style.width='0'; st.textContent='Downloading '+Math.round(pct)+'%'; }
+  else if(stage==='fetched'){ $('barA').style.width='100%'; $('barB').style.width='0'; st.textContent='Downloaded'; }
+  else if(stage==='cleaning'){ $('barA').style.width='100%'; $('barB').style.width='55%'; st.textContent='Cleaning metadata…'; }
+  else { $('barA').style.width='100%'; $('barB').style.width='100%'; st.textContent='Metadata removed'; }
+}
+
+/* ---------- main box: download + clean in one go ---------- */
+async function startClean(){
+  const url=$('url').value.trim(), n=$('notice');
+  clearNotice(n);
+  if(!/^https?:\/\//i.test(url)){ notice(n,'error','That doesn’t look like a link','Paste a full address that starts with http or https.'); return; }
+  setBusy(true); setProcess('downloading',0);
+  try{
+    const {id}=await post('/start',{url,browser:$('browser').value,mode:'clean'});
+    const s=await poll(id,s=>s.done,s=>setProcess(s.stage,s.progress));
+    if(s.error){ idle(); notice(n,'error','That video couldn’t be saved',s.error); }
+    else{
+      setProcess('done',100);
+      notice(n,'', 'Your video is ready', s.name, [link('btn','/file/'+id,dlIcon+' Save video')]);
+      addSaved(id,s.name);
+    }
+  }catch(e){ idle(); notice(n,'error','Couldn’t start',e.message); }
+  setBusy(false);
+}
+
+/* ---------- YouTube: fetch first, then choose ---------- */
+async function startFetch(){
+  const url=$('yturl').value.trim(), n=$('ytnotice'), box=$('ytresult');
+  clearNotice(n); box.classList.remove('on');
+  if(!/^https?:\/\//i.test(url)){ notice(n,'error','That doesn’t look like a link','Paste a full YouTube address that starts with http or https.'); return; }
+  setBusy(true); $('fetchLabel').textContent='Fetching…'; setProcess('downloading',0);
+  try{
+    const {id}=await post('/start',{url,browser:$('browser').value,mode:'fetch'});
+    const s=await poll(id,s=>s.fetched,s=>setProcess(s.stage,s.progress));
+    if(s.error){ idle(); notice(n,'error','That video couldn’t be fetched',s.error); }
+    else{ setProcess('fetched',100); showChoice(id,s.originalName); }
+  }catch(e){ idle(); notice(n,'error','Couldn’t start',e.message); }
+  $('fetchLabel').textContent='Fetch YouTube video'; setBusy(false);
+}
+function showChoice(id,name){
+  const box=$('ytresult'), acts=$('ytactions');
+  $('ytname').textContent=name; $('ytmeta').textContent='Downloaded. Keep it as it is, or remove the metadata.';
+  acts.innerHTML='';
+  const clean=document.createElement('button'); clean.className='btn'; clean.type='button'; clean.innerHTML='Clean metadata '+arrow;
+  clean.onclick=()=>cleanFetched(id,clean);
+  acts.append(link('btn ghost','/original/'+id,dlIcon+' Keep original'), clean);
+  box.classList.add('on');
+}
+async function cleanFetched(id,btn){
+  const n=$('ytnotice'); clearNotice(n); btn.disabled=true; btn.firstChild.textContent='Cleaning… '; setBusy(true); setProcess('cleaning',100);
+  try{
+    await post('/clean/'+id);
+    const s=await poll(id,s=>s.done,s=>setProcess(s.stage,s.progress));
+    if(s.error){ setProcess('fetched',100); notice(n,'error','Couldn’t clean that video',s.error); btn.disabled=false; btn.innerHTML='Clean metadata '+arrow; }
+    else{
+      setProcess('done',100);
+      $('ytmeta').textContent='Metadata removed. Your clean file is ready.';
+      $('ytactions').prepend(link('btn','/file/'+id,dlIcon+' Save clean file'));
+      btn.remove(); addSaved(id,s.name);
+    }
+  }catch(e){ notice(n,'error','Couldn’t clean that video',e.message); btn.disabled=false; btn.innerHTML='Clean metadata '+arrow; }
+  setBusy(false);
+}
+
+$('go').onclick=()=>{ if(!busy) startClean(); };
+$('fetch').onclick=()=>{ if(!busy) startFetch(); };
+$('url').addEventListener('keydown',e=>{ if(e.key==='Enter') $('go').click(); });
+$('yturl').addEventListener('keydown',e=>{ if(e.key==='Enter') $('fetch').click(); });
+</script>
+</body></html>

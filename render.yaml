@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: vysaver
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MAX_ACTIVE_JOBS
+        value: "2"
+      - key: MAX_JOBS_PER_HOUR
+        value: "5"

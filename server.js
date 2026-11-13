@@ -20,7 +20,8 @@ const VIDEO_EXTS = new Set([".mp4", ".mkv", ".webm", ".mov", ".m4v"]);
 
 // ---------- yt-dlp (standalone binary, downloaded once) ----------
 const isWin = process.platform === "win32";
-const BIN_DIR = path.join(__dirname, "bin");
+// Cloud hosts may mount /app read-only; install the binary in writable temp storage.
+const BIN_DIR = path.join(os.tmpdir(), "vysaver-bin");
 const YTDLP = path.join(BIN_DIR, isWin ? "yt-dlp.exe" : "yt-dlp");
 const ASSET = isWin ? "yt-dlp.exe" : process.platform === "darwin" ? "yt-dlp_macos" : "yt-dlp_linux";
 
